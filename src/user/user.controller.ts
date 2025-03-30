@@ -1,22 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ValidationPipe,
-  UseGuards,
-} from '@nestjs/common';
+import * as nestjs from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from './Guard/Auth.Guard';
 import { Roles } from './decorator/user.decorator';
 
-@Controller('v1/user')
-@UseGuards(AuthGuard)
+@nestjs.Controller('v1/user')
+@nestjs.UseGuards(AuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -25,10 +15,15 @@ export class UserController {
    * @param createUserDto User data to create
    * @returns The created user
    */
-  @Post()
+  @nestjs.Post()
   @Roles(['Admin'])
   async create(
-    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    @nestjs.Body(
+      new nestjs.ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
     createUserDto: CreateUserDto,
   ) {
     return this.userService.createUser(createUserDto);
@@ -38,7 +33,7 @@ export class UserController {
    * Get all users (Admin and Manager only)
    * @returns Array of all users
    */
-  @Get()
+  @nestjs.Get()
   @Roles(['Admin', 'Manager'])
   async findAll() {
     return this.userService.findAll();
@@ -49,9 +44,9 @@ export class UserController {
    * @param id User ID
    * @returns The requested user
    */
-  @Get(':id')
+  @nestjs.Get(':id')
   @Roles(['Admin', 'Manager'])
-  async findOne(@Param('id') id: string) {
+  async findOne(@nestjs.Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
@@ -61,11 +56,16 @@ export class UserController {
    * @param updateUserDto Data to update
    * @returns The updated user
    */
-  @Patch(':id')
+  @nestjs.Patch(':id')
   @Roles(['Admin'])
   async update(
-    @Param('id') id: string,
-    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    @nestjs.Param('id') id: string,
+    @nestjs.Body(
+      new nestjs.ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
     updateUserDto: UpdateUserDto,
   ) {
     return this.userService.updateUser(id, updateUserDto);
@@ -76,9 +76,9 @@ export class UserController {
    * @param id User ID to delete
    * @returns Success message
    */
-  @Delete(':id')
+  @nestjs.Delete(':id')
   @Roles(['Admin'])
-  async remove(@Param('id') id: string) {
+  async remove(@nestjs.Param('id') id: string) {
     return this.userService.deleteUser(id);
   }
 }
