@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import * as validate from 'class-validator';
 
 export class CreateUserDto {
