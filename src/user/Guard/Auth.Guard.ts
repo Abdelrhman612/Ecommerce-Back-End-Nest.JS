@@ -21,29 +21,36 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    const roles = this.reflector.get(Roles, context.getHandler());
-    //API Public
-    if (!roles) {
+    const requiredRoles = this.reflector.get(Roles, context.getHandler()) || [];
+
+    // If no roles are required, allow access
+    if (requiredRoles.length === 0) {
       return true;
     }
+
+    const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Missing authentication token');
     }
+
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET as string,
       });
-      if (!roles.includes(payload.role)) {
-        throw new UnauthorizedException();
+
+      if (!payload.role) {
+        throw new UnauthorizedException('Invalid token payload: role missing');
       }
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
-      request['user'] = payload;
-    } catch {
-      throw new UnauthorizedException();
+
+      if (!requiredRoles.includes(payload.role)) {
+        throw new UnauthorizedException('Insufficient permissions');
+      }
+
+      request.user = payload;
+      return true;
+    } catch (error) {
+      throw new UnauthorizedException(error.message || 'Invalid token');
     }
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {

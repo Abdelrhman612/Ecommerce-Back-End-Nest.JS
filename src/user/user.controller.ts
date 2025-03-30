@@ -12,6 +12,7 @@ export class UserController {
 
   /**
    * Create a new user (Admin only)
+   *
    * @param createUserDto User data to create
    * @returns The created user
    */
