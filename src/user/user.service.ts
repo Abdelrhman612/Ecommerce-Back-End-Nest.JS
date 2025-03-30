@@ -4,14 +4,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { Model } from 'mongoose';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(User.name) private UserModel: Model<User>,
-    private jwtService: JwtService,
-  ) {}
+  constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
   async create(createUserDto: CreateUserDto) {
     const AddUser = await this.UserModel.create(createUserDto);
     return { status: 'sucsess', data: { AddUser } };

@@ -1,55 +1,54 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import {
-  IsString,
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsBoolean,
-  IsOptional,
-  IsIn,
-} from 'class-validator';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
+import * as validate from 'class-validator';
 
 export class CreateUserDto {
-  @IsString({ message: 'Name must be a string' })
-  @IsNotEmpty({ message: 'Name is required' })
+  @validate.IsString({ message: 'Name must be a string' })
+  @validate.IsNotEmpty({ message: 'Name is required' })
   name: string;
 
-  @IsEmail({}, { message: 'Email must be a valid email address' })
-  @IsNotEmpty({ message: 'Email is required' })
+  @validate.IsEmail({}, { message: 'Email must be a valid email address' })
+  @validate.IsNotEmpty({ message: 'Email is required' })
   email: string;
 
-  @IsString({ message: 'Password must be a string' })
-  @IsNotEmpty({ message: 'Password is required' })
+  @validate.IsString({ message: 'Password must be a string' })
+  @validate.IsNotEmpty({ message: 'Password is required' })
   password: string;
 
-  @IsString({ message: 'Role must be a string' })
-  @IsIn(['Admin', 'User', 'Manager'], {
+  @validate.IsString({ message: 'Role must be a string' })
+  @validate.IsIn(['Admin', 'User', 'Manager'], {
     message: 'Role must be one of: admin, user, manager',
   })
+  @validate.IsOptional()
   role: string;
 
-  @IsString({ message: 'Avatar must be a string (URL or path)' })
-  @IsOptional()
+  @validate.IsString({ message: 'Avatar must be a string (URL or path)' })
+  @validate.IsOptional()
   avatar?: string;
 
-  @IsNumber({}, { message: 'Age must be a number' })
+  @validate.IsNumber({}, { message: 'Age must be a number' })
+  @validate.IsOptional()
   age: number;
 
-  @IsString({ message: 'phoneNumber must be a string' })
+  @validate.IsString({ message: 'phoneNumber must be a string' })
+  @validate.IsOptional()
   phoneNumber: string;
 
-  @IsString({ message: 'Address must be a string' })
+  @validate.IsString({ message: 'Address must be a string' })
+  @validate.IsOptional()
   address: string;
 
-  @IsBoolean({ message: 'Active must be a boolean (true/false)' })
+  @validate.IsBoolean({ message: 'Active must be a boolean (true/false)' })
+  @validate.IsOptional()
   active: boolean;
 
-  @IsString({ message: 'Verification code must be a string' })
-  @IsOptional()
+  @validate.IsString({ message: 'Verification code must be a string' })
+  @validate.IsOptional()
   verificationCode?: string;
 
-  @IsString({ message: 'Gender must be a string' })
-  @IsIn(['male', 'female'], {
+  @validate.IsString({ message: 'Gender must be a string' })
+  @validate.IsIn(['male', 'female'], {
     message: 'Gender must be one of: male, female',
   })
   gender: string;

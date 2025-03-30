@@ -12,14 +12,16 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from 'src/user/Guard/Auth.Guard';
+import { AuthGuard } from './Guard/Auth.Guard';
+import { Roles } from './decorator/user.decorator';
 
 @Controller('user')
+@UseGuards(AuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @Roles(['Admin'])
   create(
     @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     createUserDto: CreateUserDto,
