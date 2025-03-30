@@ -26,7 +26,6 @@ export class User {
     required: [true, 'The password field is required.'],
     type: String,
     minlength: [5, 'The password must be at least 5 characters long.'],
-    maxlength: [20, 'The password must not exceed 20 characters.'],
   })
   password: string;
 
