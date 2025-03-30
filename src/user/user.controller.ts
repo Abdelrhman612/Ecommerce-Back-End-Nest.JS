@@ -35,8 +35,8 @@ export class UserController {
    */
   @nestjs.Get()
   @Roles(['Admin', 'Manager'])
-  async findAll() {
-    return this.userService.findAll();
+  async findAll(@nestjs.Query() query) {
+    return this.userService.findAll(query);
   }
 
   /**

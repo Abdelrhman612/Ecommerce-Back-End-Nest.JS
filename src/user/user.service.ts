@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -46,13 +48,47 @@ export class UserService {
    * Retrieves all users from the database
    * @returns Array of all users without sensitive information
    */
-  async findAll(): Promise<{ status: string; data: User[] }> {
+  async findAll(query): Promise<{
+    status: string;
+    message: string;
+    length: number;
+    data: User[];
+  }> {
+    const {
+      limit = 1000_000_000,
+      skip = 0,
+      sort = 'asc',
+      name,
+      email,
+      role,
+    } = query;
+
+    if (Number.isNaN(Number(+limit))) {
+      throw new HttpException('Invalid limit', 400);
+    }
+    if (Number.isNaN(Number(+skip))) {
+      throw new HttpException('Invalid skip', 400);
+    }
+    if (!['asc', 'desc'].includes(sort)) {
+      throw new HttpException('Invalid sort', 400);
+    }
     const users = await this.userModel
       .find()
       .select('-password -__v')
       .lean()
+      .skip(skip)
+      .limit(limit)
+      .where('name', new RegExp(name, 'i'))
+      .where('email', new RegExp(email, 'i'))
+      .where('role', new RegExp(role, 'i'))
+      .sort({ name: sort })
       .exec();
-    return { status: 'success', data: users };
+    return {
+      status: 'success',
+      message: 'Users found successfully',
+      length: users.length,
+      data: users,
+    };
   }
 
   /**
