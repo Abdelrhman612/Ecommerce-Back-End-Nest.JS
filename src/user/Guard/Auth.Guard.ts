@@ -1,4 +1,6 @@
-
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   CanActivate,
   ExecutionContext,
@@ -21,7 +23,6 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const requiredRoles = this.reflector.get(Roles, context.getHandler()) || [];
 
-  
     if (requiredRoles.length === 0) {
       return true;
     }
