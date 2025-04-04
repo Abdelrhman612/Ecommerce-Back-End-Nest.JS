@@ -165,4 +165,35 @@ export class UserService {
       .select('-password -__v');
     return { status: 'success', data: user };
   }
+  async updateMe(
+    payload: { sub: string },
+    updateUserDto: UpdateUserDto,
+  ): Promise<{ status: string; data: any }> {
+    if (!payload.sub) {
+      throw new NotFoundException('User not found');
+    }
+    const existingUser = await this.userModel.findById(payload.sub).exec();
+    if (!existingUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(payload.sub, updateUserDto, { new: true })
+      .select('-password -__v')
+      .lean()
+      .exec();
+
+    return { status: 'success', data: updatedUser };
+  }
+  async DeleteMe(payload: { sub: string }) {
+    if (!payload.sub) {
+      throw new NotFoundException('User not found');
+    }
+    const existingUser = await this.userModel.findById(payload.sub).exec();
+    if (!existingUser) {
+      throw new NotFoundException('User not found');
+    }
+    await this.userModel.findByIdAndDelete(payload.sub);
+    return { status: 'success', message: 'Delete User Is successfully' };
+  }
 }

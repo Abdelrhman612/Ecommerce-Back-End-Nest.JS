@@ -84,17 +84,42 @@ export class UserController {
     return this.userService.deleteUser(id);
   }
 }
-/**
- * Any user can get your data
- * @returns Success message and Get all users
- */
+
 @nestjs.Controller('profile')
 @nestjs.UseGuards(AuthGuard)
 export class ProfileController {
   constructor(private readonly userService: UserService) {}
+  /**
+   * Any user can get your data
+   * @returns Success message and Get all users
+   * Get a user (Admin and User only)
+   */
   @nestjs.Get('me')
   @Roles(['Admin', 'User'])
   async GetMe(@nestjs.Req() req: { user: any }) {
     return this.userService.GetMe(req.user);
+  }
+  /**
+   * Any user can Update your data
+   * @returns Success message and Update Your data
+   * Update a user (Admin and User only)
+   */
+  @nestjs.Patch('UpdateMe')
+  @Roles(['Admin', 'User'])
+  async updateMe(
+    @nestjs.Body() updateUserDto: UpdateUserDto,
+    @nestjs.Req() req: { user: any },
+  ) {
+    return this.userService.updateMe(req.user, updateUserDto);
+  }
+  /**
+   * Any user can Delete your data
+   * @returns Success message and Delete Your data
+   * Delete a user (Admin and User only)
+   */
+  @nestjs.Delete('DeleteMe')
+  @Roles(['Admin', 'User'])
+  async deleteMe(@nestjs.Req() req: { user: any }) {
+    return this.userService.DeleteMe(req.user);
   }
 }
