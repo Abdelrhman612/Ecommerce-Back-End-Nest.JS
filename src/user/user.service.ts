@@ -154,4 +154,15 @@ export class UserService {
     await this.userModel.findByIdAndDelete(id).exec();
     return { status: 'success', message: 'User deleted successfully' };
   }
+
+  async GetMe(payload: { sub: any }) {
+    if (!payload.sub) {
+      throw new NotFoundException('user is not found');
+    }
+
+    const user = await this.userModel
+      .findById(payload.sub)
+      .select('-password -__v');
+    return { status: 'success', data: user };
+  }
 }

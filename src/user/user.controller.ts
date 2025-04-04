@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import * as nestjs from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -81,5 +82,19 @@ export class UserController {
   @Roles(['Admin'])
   async remove(@nestjs.Param('id') id: string) {
     return this.userService.deleteUser(id);
+  }
+}
+/**
+ * Any user can get your data
+ * @returns Success message and Get all users
+ */
+@nestjs.Controller('profile')
+@nestjs.UseGuards(AuthGuard)
+export class ProfileController {
+  constructor(private readonly userService: UserService) {}
+  @nestjs.Get('me')
+  @Roles(['Admin', 'User'])
+  async GetMe(@nestjs.Req() req: { user: any }) {
+    return this.userService.GetMe(req.user);
   }
 }
