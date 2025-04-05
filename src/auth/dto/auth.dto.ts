@@ -32,3 +32,22 @@ export class ResetPasswordto {
   @validate.IsOptional()
   verificationCode: string;
 }
+export class VerifyCodeDto {
+  @validate.IsEmail({}, { message: 'Email must be a valid email address' })
+  @validate.IsNotEmpty({ message: 'Email is required' })
+  email: string;
+  @validate.IsString({ message: 'Verification code must be a string' })
+  @validate.IsOptional()
+  verificationCode: string;
+  @validate.IsString({ message: 'Verification code must be a string' })
+  code: string;
+}
+export class ChangePasswordDto {
+  @validate.IsString({ message: 'Password must be a string' })
+  @validate.IsNotEmpty({ message: 'Password is required' })
+  password: string;
+  @validate.IsEmail({}, { message: 'Email must be a valid email address' })
+  @validate.IsNotEmpty({ message: 'Email is required' })
+  @validate.IsOptional()
+  email: string;
+}

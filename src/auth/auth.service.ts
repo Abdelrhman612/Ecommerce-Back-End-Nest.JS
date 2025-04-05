@@ -8,7 +8,13 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
-import { ResetPasswordto, SignIndto, SignUpdto } from './dto/auth.dto';
+import {
+  ChangePasswordDto,
+  ResetPasswordto,
+  SignIndto,
+  SignUpdto,
+  VerifyCodeDto,
+} from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -72,13 +78,16 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('user is not found');
     }
+
     const code = Math.floor(Math.random() * 1000000)
       .toString()
       .padStart(6, '0');
+
     await this.UserModel.findOneAndUpdate(
       { email: email },
       { verificationCode: code },
     );
+
     const htmlMessage = `
   <!DOCTYPE html>
 <html>
@@ -103,5 +112,35 @@ export class AuthService {
       status: 'success',
       message: `Code sent successfully on your email -> ${email}`,
     };
+  }
+  async verifycode(verifyCodeDto: VerifyCodeDto) {
+    const { email, code } = verifyCodeDto;
+    const user = await this.UserModel.findOne({ email: email });
+    if (!user) {
+      throw new NotFoundException('user is not found');
+    }
+    await this.UserModel.findOneAndUpdate(
+      { email: email },
+      { verificationCode: code },
+    );
+    console.log('data ->', user.verificationCode, code);
+    if (user.verificationCode !== code) {
+      throw new UnauthorizedException();
+    }
+    return {
+      status: 'success',
+      message: 'Code verified is succussfully , go to change your password',
+    };
+  }
+  async changePassword(newPassword: ChangePasswordDto) {
+    const { password, email } = newPassword;
+    const user = await this.UserModel.findOne({ email: email });
+    if (!user) {
+      throw new NotFoundException('user is not found');
+    }
+    const hash = await bcrypt.hash(password, 10);
+    await this.UserModel.findOneAndUpdate({ email: email }, { password: hash });
+
+    return { status: 'success', message: 'Change password is successfully' };
   }
 }
