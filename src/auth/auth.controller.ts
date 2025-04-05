@@ -1,6 +1,6 @@
 import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpdto, SignIndto } from './dto/auth.dto';
+import { SignUpdto, SignIndto, ResetPasswordto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,5 +18,12 @@ export class AuthController {
     signIndto: SignIndto,
   ) {
     return this.authService.signIn(signIndto);
+  }
+  @Post('reset-password')
+  resetPassword(
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    resetPasswordto: ResetPasswordto,
+  ) {
+    return this.authService.ResetPassword(resetPasswordto);
   }
 }

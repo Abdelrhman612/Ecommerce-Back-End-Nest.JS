@@ -2,20 +2,23 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
-import { SignIndto, SignUpdto } from './dto/auth.dto';
+import { ResetPasswordto, SignIndto, SignUpdto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private UserModel: Model<User>,
     private jwtService: JwtService,
+    private readonly mailService: MailerService,
   ) {}
   async signUp(
     signUpDto: SignUpdto,
@@ -62,5 +65,43 @@ export class AuthService {
     };
     const token = this.jwtService.sign(payload);
     return { status: 'success', data: { token } };
+  }
+  async ResetPassword(resetPasswordto: ResetPasswordto) {
+    const { email } = resetPasswordto;
+    const user = await this.UserModel.findOne({ email: email });
+    if (!user) {
+      throw new NotFoundException('user is not found');
+    }
+    const code = Math.floor(Math.random() * 1000000)
+      .toString()
+      .padStart(6, '0');
+    await this.UserModel.findOneAndUpdate(
+      { email: email },
+      { verificationCode: code },
+    );
+    const htmlMessage = `
+  <!DOCTYPE html>
+<html>
+  <body style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2>Hello ${user.name},</h2>
+    <p>You requested to reset your password for <strong>E-Commerce</strong>.</p>
+    <p>Your reset code is:</p>
+    <h3> ${code}</h3>
+    <p>If you didn't request this, just ignore this email.</p>
+    <p>— E-Commerce Team</p>
+  </body>
+</html>
+
+`;
+    await this.mailService.sendMail({
+      from: process.env.EMAIL_FROM as string,
+      to: email,
+      subject: ` E-Commerce -> resetPassword`,
+      html: htmlMessage,
+    });
+    return {
+      status: 'success',
+      message: `Code sent successfully on your email -> ${email}`,
+    };
   }
 }

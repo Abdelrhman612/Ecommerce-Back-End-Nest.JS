@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as validate from 'class-validator';
 export class SignUpdto {
   @validate.IsString({ message: 'Name must be a string' })
@@ -25,4 +23,12 @@ export class SignIndto {
   @validate.IsString({ message: 'Password must be a string' })
   @validate.IsNotEmpty({ message: 'Password is required' })
   password: string;
+}
+export class ResetPasswordto {
+  @validate.IsEmail({}, { message: 'Email must be a valid email address' })
+  @validate.IsNotEmpty({ message: 'Email is required' })
+  email: string;
+  @validate.IsString({ message: 'Verification code must be a string' })
+  @validate.IsOptional()
+  verificationCode: string;
 }
