@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET as string,
       });
-      if (payload.sub && payload.role) {
+      if (payload.sub && String(payload.role).toLowerCase()) {
         request['user'] = payload;
         return true;
       }
@@ -45,7 +45,7 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('Invalid token payload: role missing');
       }
 
-      if (!requiredRoles.includes(payload.role)) {
+      if (!requiredRoles.includes(String(payload.role).toLocaleLowerCase())) {
         throw new UnauthorizedException('Insufficient permissions');
       }
 
