@@ -4,17 +4,25 @@ import { UpdateSubCatergoryDto } from './dto/update-sub-catergory.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { subCategory } from './schemas/category.schema';
 import { Model } from 'mongoose';
+import { Category } from 'src/category/schemas/category.schema';
 
 @Injectable()
 export class SubCatergoryService {
   constructor(
     @InjectModel(subCategory.name) private subCategoryModel: Model<subCategory>,
+    @InjectModel(Category.name) private CatgoryModel: Model<Category>,
   ) {}
   async CreateSubCategory(createSubCatergoryDto: CreateSubCatergoryDto) {
     const { name } = createSubCatergoryDto;
     const SubCategory = await this.subCategoryModel.findOne({ name });
     if (SubCategory) {
       throw new NotFoundException('sub-Category Already exist');
+    }
+    const category = await this.CatgoryModel.findById(
+      createSubCatergoryDto.category,
+    );
+    if (!category) {
+      throw new NotFoundException('category is not found');
     }
     const AddsubCategory = await this.subCategoryModel.create(
       createSubCatergoryDto,
