@@ -123,7 +123,6 @@ export class AuthService {
       { email: email },
       { verificationCode: code },
     );
-    console.log('data ->', user.verificationCode, code);
     if (user.verificationCode !== code) {
       throw new UnauthorizedException();
     }
