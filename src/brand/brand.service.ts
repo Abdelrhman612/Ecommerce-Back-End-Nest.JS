@@ -21,7 +21,7 @@ export class BrandService {
 
   async findAll() {
     const Brands = await this.BrandModel.find().select('-__v');
-    return { status: 'success', data: Brands };
+    return { status: 'success', length: Brands.length, data: Brands };
   }
 
   async findOne(_id: string) {
