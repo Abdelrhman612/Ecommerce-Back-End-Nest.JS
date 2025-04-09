@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { SubCatergoryService } from './sub-catergory.service';
 import { CreateSubCatergoryDto } from './dto/create-sub-catergory.dto';
@@ -26,7 +27,10 @@ export class SubCatergoryController {
   @Post()
   @Roles(['Admin'])
   @UseGuards(AuthGuard)
-  create(@Body() createSubCatergoryDto: CreateSubCatergoryDto) {
+  create(
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    createSubCatergoryDto: CreateSubCatergoryDto,
+  ) {
     return this.subCatergoryService.CreateSubCategory(createSubCatergoryDto);
   }
 
