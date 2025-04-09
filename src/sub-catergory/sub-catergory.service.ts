@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubCatergoryDto } from './dto/create-sub-catergory.dto';
 import { UpdateSubCatergoryDto } from './dto/update-sub-catergory.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { subCategory } from './schemas/category.schema';
+import { subCategory } from './schemas/sub-category.schema';
 import { Model } from 'mongoose';
 import { Category } from 'src/category/schemas/category.schema';
 
