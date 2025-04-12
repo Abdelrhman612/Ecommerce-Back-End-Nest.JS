@@ -36,7 +36,7 @@ export class SubCatergoryService {
       .find()
       .select('-__v')
       .populate('category');
-    return { status: 'success', data: SubCategory };
+    return { status: 'success', length: SubCategory.length, data: SubCategory };
   }
 
   async findOne(_id: string) {
