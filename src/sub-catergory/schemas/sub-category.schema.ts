@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Category } from 'src/category/schemas/category.schema';
 
-export type UserDocument = subCategory & Document;
+export type subCategoryDocument = subCategory & Document;
 
 @Schema({ timestamps: true })
 export class subCategory {
