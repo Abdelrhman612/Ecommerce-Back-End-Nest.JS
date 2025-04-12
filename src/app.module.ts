@@ -8,7 +8,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { CategoryModule } from './category/category.module';
 import { SubCatergoryModule } from './sub-catergory/sub-catergory.module';
 import { BrandModule } from './brand/brand.module';
-import { CouponModule } from './coupon/coupon.module';
+
+import { ProductModule } from './product/product.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -32,7 +33,7 @@ import { CouponModule } from './coupon/coupon.module';
     CategoryModule,
     SubCatergoryModule,
     BrandModule,
-    CouponModule,
+    ProductModule,
   ],
 })
 export class AppModule {}
